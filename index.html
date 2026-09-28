@@ -66,6 +66,7 @@ body {
   font-size: 0.95em;
   cursor: pointer;
   color: #334155;
+  transition: all 0.2s ease;
 }
 .tab-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
 
@@ -165,29 +166,68 @@ body {
 }
 .ctrl-btn:disabled { background: #94a3b8; }
 
-.resource-card {
-  background: #f8fafc;
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--primary);
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
+/* Form Controls & Checkpoint Styling */
 .form-group {
   margin-bottom: 22px;
   padding-bottom: 18px;
   border-bottom: 1px solid #e2e8f0;
 }
-label { font-weight: bold; margin-bottom: 6px; display: block; }
-input, textarea, select {
+.form-group:last-of-type {
+  border-bottom: none;
+}
+
+label.field-label {
+  font-weight: bold;
+  margin-bottom: 4px;
+  display: block;
+  font-size: 1.02em;
+  color: var(--text-dark);
+}
+
+.field-subtext {
+  color: var(--text-muted);
+  font-size: 0.88em;
+  margin-top: 2px;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+input[type="text"], input[type="date"], textarea, select {
   width: 100%;
-  padding: 10px;
+  padding: 11px 13px;
   border: 1px solid var(--border);
   border-radius: 6px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 0.95em;
+  color: var(--text-dark);
+  background-color: #ffffff;
+  transition: border-color 0.2s ease;
+}
+
+input[type="text"]:focus, input[type="date"]:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.1);
+}
+
+input[type="radio"], input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+  cursor: pointer;
+  accent-color: var(--primary);
+  transform: scale(1.15);
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-weight: normal;
+  color: var(--text-dark);
+  font-size: 0.95em;
+  line-height: 1.3;
 }
 
 .submit-btn {
@@ -200,6 +240,12 @@ input, textarea, select {
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+  background: var(--primary-dark);
 }
 
 .tab-content { display: none; }
@@ -237,7 +283,6 @@ input, textarea, select {
   <!-- TABS -->
   <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('deck')">Deck</button>
-    <button class="tab-btn" onclick="switchTab('res')">Resource Hub</button>
     <button class="tab-btn" onclick="switchTab('form')">Student Work Checkpoint</button>
   </div>
 
@@ -257,7 +302,7 @@ input, textarea, select {
     </div>
 
     <div id="slide-stage" class="slide-stage">
-      <!-- Slides injected by script.js -->
+      <!-- Slides injected by script -->
     </div>
 
     <div class="deck-controls">
@@ -266,21 +311,11 @@ input, textarea, select {
     </div>
   </div>
 
-  <!-- TAB: RESOURCE HUB -->
-  <div id="res-tab" class="card tab-content">
-    <h3>Lesson Resource & Reference Hub</h3>
-    <p class="muted">Access official course references below.</p>
-    <div id="resource-list">
-      <!-- Resources injected by script.js -->
-    </div>
-  </div>
-
   <!-- TAB: STUDENT WORK CHECKPOINT -->
   <div id="form-tab" class="card tab-content">
     <h3>Student Work Checkpoint & Reflection</h3>
     <form id="checkpoint-form" onsubmit="event.preventDefault(); window.print();">
-      <!-- Dynamic form fields injected by script.js -->
-      <button type="submit" class="submit-btn">Print this page and turn into the Red Basket!</button>
+      <!-- Dynamic form fields injected by script -->
     </form>
   </div>
 
@@ -293,12 +328,12 @@ let bellringers = [];
 
 // Stock image pool for default visual slides
 const stockImagePool = [
-  'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=300&q=80', // Turtle / Nature
-  'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80', // Water / Earth-Diver
-  'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80', // Ecology / Forest
-  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=300&q=80', // Campfire / Orality
-  'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=300&q=80', // Literature / History
-  'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=300&q=80'  // Writing Workshop
+  'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=300&q=80'
 ];
 
 // Emoji fallback pool
@@ -313,9 +348,7 @@ function renderSlides(slides) {
     wrapper.className = 'slide' + (index === 0 ? ' active' : '');
     wrapper.id = `slide-${index + 1}`;
 
-    // Priority 1: slide.image OR Stock Web Image
     const imageUrl = slide.image || stockImagePool[index % stockImagePool.length];
-    // Fallback: slide.icon OR Emoji Pool
     const fallbackEmoji = slide.icon || iconPool[index % iconPool.length];
 
     const visualMediaHTML = `
@@ -347,6 +380,7 @@ function renderSlides(slides) {
     stage.appendChild(wrapper);
   });
 }
+
 function initLesson(data) {
   bellringers = data.bellringers || [];
   totalSlides = (data.slides || []).length || 1;
@@ -354,7 +388,6 @@ function initLesson(data) {
   document.getElementById('slide-tracker').innerText = `Slide 1 of ${totalSlides}`;
 
   renderSlides(data.slides || []);
-  renderResources(data.resources || []);
   renderForm(data.form || []);
 
   randomizeBellringer();
@@ -379,70 +412,8 @@ function moveSlide(dir) {
   document.getElementById('next-btn').disabled = currentSlide === totalSlides;
 }
 
-function renderResources(resources) {
-  const container = document.getElementById('resource-list');
-  container.innerHTML = '';
-
-  let resourceList = [];
-
-  if (Array.isArray(resources)) {
-    resourceList = resources;
-  } else if (resources && typeof resources === 'object') {
-    if (Array.isArray(resources.buttons)) {
-      resourceList = resources.buttons;
-    } else if (Array.isArray(resources.files)) {
-      resourceList = resources.files;
-    } else if (Array.isArray(resources.items)) {
-      resourceList = resources.items;
-    } else if (resources.file || resources.link || resources.url) {
-      resourceList = [resources];
-    }
-  }
-
-  if (!resourceList.length && resources && typeof resources === 'object' && resources.title && (resources.file || resources.link || resources.url)) {
-    resourceList = [resources];
-  }
-
-  resourceList.forEach(res => {
-    const card = document.createElement('div');
-    card.className = 'resource-card';
-
-    if (typeof res === 'string') {
-      const cleanText = res.trim();
-      const isFile = /\.(pdf|docx?|pptx?|xlsx?)$/i.test(cleanText);
-      if (!isFile) return;
-
-      const label = cleanText.split('/').pop();
-      card.innerHTML = `
-        <div>
-          <strong>${label}</strong><br/>
-          <small>Repository file</small>
-        </div>
-        <a href="${cleanText}" target="_blank" rel="noopener noreferrer" class="ctrl-btn">Open Resource</a>
-      `;
-      container.appendChild(card);
-      return;
-    }
-
-    const resourceUrl = res.file || res.link || res.url || res.href || '#';
-    const resourceTitle = res.title || res.name || res.label || 'Resource Item';
-    const resourceDescription = res.description || res.summary || '';
-    const fileName = resourceUrl && typeof resourceUrl === 'string' ? resourceUrl.split('/').pop() : '';
-
-    card.innerHTML = `
-      <div>
-        <strong>${resourceTitle || fileName || 'Resource Item'}</strong><br/>
-        <small>${resourceDescription}</small>
-      </div>
-      ${resourceUrl && resourceUrl !== '#' ? `<a href="${resourceUrl}" target="_blank" rel="noopener noreferrer" class="ctrl-btn">Open Resource</a>` : ''}
-    `;
-    container.appendChild(card);
-  });
-}
-
 function renderForm(fields) {
   const form = document.getElementById('checkpoint-form');
-  const submitBtn = form.querySelector('.submit-btn');
   form.innerHTML = '';
 
   const fieldList = Array.isArray(fields) ? fields : [];
@@ -451,51 +422,78 @@ function renderForm(fields) {
     const group = document.createElement('div');
     group.className = 'form-group';
 
-    const label = field.label || field.prompt || `Question ${field.field_id || ''}`.trim() || 'Question';
-    const id = `field_${(field.field_id || label).toString().replace(/\s+/g, '_').toLowerCase()}`;
+    const labelText = field.label || field.prompt || `Question ${field.field_id || ''}`.trim();
+    const subtextHTML = field.subtext ? `<div class="field-subtext">${field.subtext}</div>` : '';
+    const id = `field_${(field.field_id || labelText).toString().replace(/\s+/g, '_').toLowerCase()}`;
+    const placeholder = field.placeholder || '';
 
     let inputHTML = '';
     if (field.type === 'short_answer' || field.type === 'short_text' || field.type === 'text') {
-      inputHTML = `<input type="text" id="${id}" ${field.required ? 'required' : ''} />`;
+      inputHTML = `<input type="text" id="${id}" name="${id}" placeholder="${placeholder}" ${field.required ? 'required' : ''} />`;
     } else if (field.type === 'date') {
-      inputHTML = `<input type="date" id="${id}" ${field.required ? 'required' : ''} />`;
+      inputHTML = `<input type="date" id="${id}" name="${id}" ${field.required ? 'required' : ''} />`;
     } else if (field.type === 'long_text' || field.type === 'quote_citation' || field.type === 'reflection') {
-      inputHTML = `<textarea id="${id}" rows="5" ${field.required ? 'required' : ''}></textarea>`;
+      inputHTML = `<textarea id="${id}" name="${id}" rows="4" placeholder="${placeholder}" ${field.required ? 'required' : ''}></textarea>`;
     } else if (field.type === 'multiple_choice' || field.type === 'true_false') {
       const options = field.type === 'true_false' ? ['True', 'False'] : (field.options || []);
-      inputHTML = options.map((option, index) => `<label><input type="radio" id="${id}_${index}" name="${id}" value="${option}" ${field.required ? 'required' : ''} /> ${option}</label>`).join('<br/>');
+      inputHTML = options.map((option, index) => `
+        <label class="option-label">
+          <input type="radio" id="${id}_${index}" name="${id}" value="${option}" ${field.required ? 'required' : ''} />
+          <span>${option}</span>
+        </label>
+      `).join('');
     } else if (field.type === 'checkbox') {
-      inputHTML = (field.options || []).map((option, index) => `<label><input type="checkbox" id="${id}_${index}" name="${id}" value="${option}" /> ${option}</label>`).join('<br/>');
-    } else if (field.type === 'rating_scale') {
-      inputHTML = `<select id="${id}">${(field.options || []).map(o => `<option>${o}</option>`).join('')}</select>`;
-    } else if (field.type === 'select_rubric') {
-      inputHTML = `<select id="${id}"><option>-- Select Rubric Benchmark Level --</option>${(field.options || []).map(o => `<option>${o}</option>`).join('')}</select>`;
+      inputHTML = (field.options || []).map((option, index) => `
+        <label class="option-label">
+          <input type="checkbox" id="${id}_${index}" name="${id}" value="${option}" />
+          <span>${option}</span>
+        </label>
+      `).join('');
+    } else if (field.type === 'rating_scale' || field.type === 'select_rubric') {
+      const options = field.options || [];
+      const defaultOptionText = field.type === 'select_rubric' ? '-- Select Rubric Benchmark Level --' : '-- Select an Option --';
+      inputHTML = `
+        <select id="${id}" name="${id}" ${field.required ? 'required' : ''}>
+          <option value="">${defaultOptionText}</option>
+          ${options.map(o => `<option value="${o}">${o}</option>`).join('')}
+        </select>
+      `;
     } else if (field.type === 'checkbox_group' || field.type === 'multi_select') {
-      inputHTML = (field.options || []).map(o => `<label><input type="checkbox" name="${id}" value="${o}" /> ${o}</label>`).join('<br/>');
+      inputHTML = (field.options || []).map((o, index) => `
+        <label class="option-label">
+          <input type="checkbox" id="${id}_${index}" name="${id}" value="${o}" />
+          <span>${o}</span>
+        </label>
+      `).join('');
     }
 
-    group.innerHTML = `<label for="${id}">${label}</label>${inputHTML}`;
+    group.innerHTML = `<label class="field-label" for="${id}">${labelText}</label>${subtextHTML}${inputHTML}`;
     form.appendChild(group);
   });
 
-  if (submitBtn) form.appendChild(submitBtn);
+  const submitBtn = document.createElement('button');
+  submitBtn.type = 'submit';
+  submitBtn.className = 'submit-btn';
+  submitBtn.textContent = 'Print this page and turn into the Red Basket!';
+  form.appendChild(submitBtn);
 }
 
 function switchTab(key) {
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+  const btns = document.querySelectorAll('.tab-btn');
+  const tabs = document.querySelectorAll('.tab-content');
+
+  btns.forEach(btn => btn.classList.remove('active'));
+  tabs.forEach(tab => tab.classList.remove('active'));
 
   if (key === 'deck') {
-    document.querySelectorAll('.tab-btn')[0].classList.add('active');
+    btns[0].classList.add('active');
     document.getElementById('deck-tab').classList.add('active');
-  } else if (key === 'res') {
-    document.querySelectorAll('.tab-btn')[1].classList.add('active');
-    document.getElementById('res-tab').classList.add('active');
   } else if (key === 'form') {
-    document.querySelectorAll('.tab-btn')[2].classList.add('active');
+    btns[1].classList.add('active');
     document.getElementById('form-tab').classList.add('active');
   }
 }
+
 window.addEventListener('DOMContentLoaded', () => initLesson({"course_title": "English 8: Beginning studies in Literature, Research and Composition", "unit": "Unit 5 - Themes & Film Comparison", "day": 19, "week": 5, "weekly_focus": "Connect symbols to themes and infer traits using STEAL method (MN State ELA Standards: 8.1.2.2 & 8.1.7.7).", "day_focus": "The Outsiders: Theme - Honor Among Outcasts", "primary_focus": "Exploring code of conduct within marginalized groups.", "core_objectives": "Synthesizing plot events to support a thematic claim.", "bellringers": ["What does the phrase 'honor among outcasts' mean when applied to a group that breaks societal rules?", "Identify one rule from the Greasers' unwritten code of conduct described in The Outsiders.", "Quick-write: How can a character act honorably toward their friends while being viewed as a criminal by authority figures?", "Compare Ponyboy's definition of loyalty with Dally's actions during a crisis."], "slides": [{"title": "Defining Theme: Honor Among Outcasts", "standard": "MN State ELA Standard 8.1.2.2", "bullets": ["Define 'theme' as a universal statement or message about human nature, not just a single word.", "Explore how marginalized social groups construct internal codes of conduct for protection and unity.", "Distinguish between societal legality and personal loyalty within street culture."], "callout": "Theme Concept: Honor is not determined by social class, but by adherence to a moral code."}, {"title": "The Greaser Code of Conduct", "standard": "MN State ELA Standard 8.1.2.2", "bullets": ["Identify the core tenets of the Greasers' code: sticking together and not getting caught.", "Examine how shared poverty and vulnerability create an unspoken expectation of absolute loyalty.", "Analyze plot moments where breaking the code results in social isolation within the gang."], "callout": "Unwritten Rules: In Greaser culture, standing by your gang is the highest moral duty."}, {"title": "Inferring Traits via STEAL: Speech & Thoughts", "standard": "MN State ELA Standard 8.1.2.2", "bullets": ["Apply the STEAL method (Speech, Thoughts, Effect, Actions, Looks) to analyze character motivation.", "Examine Ponyboy's internal thoughts regarding Dally's hardened demeanor versus his hidden sacrifices.", "Cite dialogue where characters explicitly express their dedication to protecting one another."], "callout": "STEAL Focus: Character dialogue often reveals hidden values that conflict with public reputation."}, {"title": "Inferring Traits via STEAL: Actions & Effects", "standard": "MN State ELA Standard 8.1.2.2", "bullets": ["Analyze Johnny's actions in the park as a desperate enforcement of protection over his friend.", "Evaluate the effect Dally has on younger members, serving as both a dangerous example and a shield.", "Synthesize how character actions during key plot points build the broader theme of honor."], "callout": "Action Evidence: True honor is demonstrated through sacrifice when facing immediate threat."}, {"title": "Symbolism and Group Identity", "standard": "MN State ELA Standard 8.1.2.2", "bullets": ["Analyze how physical symbols (greased hair, leather jackets) represent pride and group solidarity.", "Examine how losing hair identity in Windrixville symbolises a stripping away of gang armor.", "Connect group identity symbols to the broader theme of finding dignity in marginalized spaces."], "callout": "Symbolic Identity: Hair and jackets represent armor protecting outcasts from societal judgment."}, {"title": "Text vs. Film: The Church Fire Scene", "standard": "MN State ELA Standard 8.1.7.7", "bullets": ["Compare the written description of the church rescue with the visual depiction in Coppola's film adaptation.", "Analyze how camera angles, lighting, and pacing emphasize heroism in the film version.", "Evaluate whether the film accurately conveys the internal moral motivations described in the novel."], "callout": "Adaptation Analysis: Film visualizes action quickly, but text provides deeper internal moral rationale."}, {"title": "Dally's Paradoxical Honor", "standard": "MN State ELA Standard 8.1.2.2", "bullets": ["Deconstruct Dallas Winston as a character who rejects law but strictly upholds gang loyalty.", "Examine Dally's willingness to take the police fall for Johnny as evidence of outcast honor.", "Contrast public perception of Dally as a criminal with the gang's perception of him as a hero."], "callout": "Character Paradox: Dally breaks social laws to uphold a higher personal code of brotherhood."}, {"title": "The Socs vs. Greasers Moral Codes", "standard": "MN State ELA Standard 8.1.2.2", "bullets": ["Compare the social privileges of the Socs with the survival tactics of the Greasers.", "Analyze Cherry Valance's role as a bridge showing that both groups face emotional isolation.", "Evaluate how economic security alters how society judges bad behavior from different classes."], "callout": "Comparative Honor: Wealth shields Socs from legal consequences, making Greaser loyalty more perilous."}, {"title": "Synthesizing Plot Events into Thematic Claims", "standard": "MN State ELA Standard 8.1.2.2", "bullets": ["Trace the development of honor from the opening rumble setup to Johnny's hospital dying words.", "Formulate a complete thematic claim connecting plot events to the message about outcast honor.", "Ensure thematic claims avoid plot summary and state a universal truth about human behavior."], "callout": "Claim Construction: A strong thematic statement asserts what the story teaches us about life."}, {"title": "Evaluating Adaptation Choices", "standard": "MN State ELA Standard 8.1.7.7", "bullets": ["Identify key inner monologues cut from the film adaptation and assess their impact on character depth.", "Discuss how music scoring in the movie influences audience sympathy during emotional scenes.", "Evaluate which medium (novel or film) conveys the theme of honor among outcasts more effectively."], "callout": "Medium Evaluation: Novel text excels at internal thought; film excels at external emotional intensity."}, {"title": "Drafting Evidence-Based Claims", "standard": "MN State ELA Standard 8.1.2.2", "bullets": ["Select two specific textual quotes that prove Greasers prioritize loyalty over personal safety.", "Write commentary explaining how each quote directly connects to the 'Honor Among Outcasts' theme.", "Practice transitioning smoothly between plot evidence and thematic analysis."], "callout": "Evidence Integration: Quotes must be accompanied by analysis explaining *why* they prove the claim."}, {"title": "Thematic Synthesis Workshop", "standard": "MN State ELA Standard 8.1.2.2", "bullets": ["Finalize a graphic organizer organizing STEAL character evidence and plot synthesis.", "Peer-review partners' thematic claim sentences for clarity, depth, and standard alignment.", "Prepare reflections comparing text and film adaptations of Johnny's final statement."], "callout": "Workshop Goal: Produce a written paragraph with a clear thematic claim and cited character evidence."}], "resources": {"title": "The Outsiders Theme & Film Study Hub", "description": "STEAL graphic organizers, film clip comparison sheets, and rubric references.", "items": [{"label": "STEAL Character Analysis Worksheet PDF", "file": "STEAL_Character_Analysis_Worksheet.pdf", "description": "Organizer for tracking character traits, speech, actions, and thematic connections."}, {"label": "Text vs Film Comparison Rubric PDF", "file": "Text_vs_Film_Comparison_Rubric.pdf", "description": "Guide for evaluating director adaptation choices against original novel descriptions."}]}, "form": [{"field_id": 1, "type": "short_answer", "label": "Student Name & Class Period", "placeholder": "Enter full name and class period...", "required": true}, {"field_id": 2, "type": "multiple_choice", "label": "1. Theme Definition (Multiple Choice)", "subtext": "Which statement best expresses a complete thematic claim rather than a simple topic?", "options": ["A) Loyalty in The Outsiders", "B) Greasers versus Socs in Oklahoma", "C) True honor is revealed through unconditional loyalty within marginalized communities.", "D) How Dally and Johnny help Ponyboy win the rumble"], "required": true}, {"field_id": 3, "type": "multiple_choice", "label": "2. STEAL Method Application (Multiple Choice)", "subtext": "When analyzing Dally giving his gun and money to Johnny and Ponyboy, which STEAL element is primarily used?", "options": ["A) Speech", "B) Actions", "C) Looks", "D) Effect on others"], "required": true}, {"field_id": 4, "type": "checkbox_group", "label": "3. Greaser Code Identification (Multi-Select)", "subtext": "Select ALL rules that represent the unspoken code of conduct among the Greasers:", "options": ["Always stick together no matter the situation.", "Never get caught by the law.", "Report gang members who break city laws immediately.", "Stand up for fellow members when attacked by rival groups."], "required": true}, {"field_id": 5, "type": "short_answer", "label": "4. Citation Practice:STEAL Character Inference", "subtext": "Quote or describe an action by Johnny or Dally that proves they possess an internal code of honor.", "placeholder": "Describe action and explain inferred trait...", "required": true}, {"field_id": 6, "type": "reflection", "label": "5. Character Paradox Analysis", "subtext": "Explain why society views Dally Winston as a delinquent, while Ponyboy and the gang view him as gallant/honorable.", "placeholder": "Contrast public criminal reputation with internal loyalty...", "required": true}, {"field_id": 7, "type": "reflection", "label": "6. Film Adaptation Evaluation (Standard 8.1.7.7)", "subtext": "Compare how the church fire scene is portrayed in the novel versus the movie. Did the film effectively capture the characters' moral choices?", "placeholder": "Analyze visual choices, pacing, or missing internal thoughts...", "required": true}, {"field_id": 8, "type": "multiple_choice", "label": "7. Symbolism and Theme Connection", "subtext": "What does the cutting of Ponyboy's greased hair in Windrixville symbolize regarding his identity?", "options": ["A) His desire to join the Socs permanently", "B) The loss of his protective gang identity and vulnerability", "C) A total rejection of Johnny's friendship", "D) His hatred for Greaser culture"], "required": true}, {"field_id": 9, "type": "reflection", "label": "8. Thematic Claim Synthesis", "subtext": "Write a 2-sentence synthesis explaining how shared hardship creates strong codes of honor among outcasts.", "placeholder": "Synthesize plot events into a universal statement about human connection...", "required": true}, {"field_id": 10, "type": "rating_scale", "label": "9. Self-Assessment: Theme & Film Analysis", "subtext": "Rate your ability to infer character traits using STEAL and connect plot events to thematic claims:", "options": ["Level 4 - Advanced: I can analyze STEAL traits, formulate strong themes, and critique film adaptation choices.", "Level 3 - Proficient: I can infer traits and write thematic claims with supporting evidence.", "Level 2 - Developing: I can identify plot events but struggle to state a universal theme statement.", "Level 1 - Beginning: I need help using the STEAL method and understanding theme."], "required": true}]}));
 </script>
 </body>
